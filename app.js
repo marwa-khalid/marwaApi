@@ -19,7 +19,7 @@ const app = express()
 
 //allows access control of the api
 app.use(
-  cors({
+cors({
     origin: "*",
   })
 );
