@@ -59,38 +59,20 @@ router.get('/:id', async(req,res)=>{
 })
 
 //insert data in database
-router.post('/',upload, async(req,res) =>{
-    //sending data from client side
-    
-    const movie = new Movie({
-        name: req.body.name,
-        year: req.body.year,
-        description: req.body.description,
-        image: req.file.filename
-    })
-
-    //save data in database
-    movie.save(function(err) {
-        if(err) {
-            res.send(err)
-            console.log("Can't add new movie: " + err);
-        } 
-        else {
-            //display in json format
-            res.json(movie)
-            console.log("New movie added")
-        }
-    })
-})
+router.post("/", upload, async function (req, res, next) {
+    let movie = new Movie(req.body);
+    if (req.file) movie.image = req.file.filename;
+    await movie.save();
+    res.send(movie);
+  });
 
 //update/patch a record
-router.patch('/:id',upload,  async(req,res) =>{
+router.patch('/:id',  async(req,res) =>{
     const movie  = await Movie.findById(req.params.id)
 
     movie.name = req.body.name
     movie.year = req.body.year
     movie.description = req.body.description
-    movie.image = req.body.image
     
     movie.save((err) =>{
         if(err) {
